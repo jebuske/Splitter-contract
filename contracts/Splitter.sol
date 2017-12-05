@@ -10,7 +10,7 @@ contract Splitter {
 
   
 
-  modifier OnlyByOwner()
+  modifier onlyByOwner()
     {
         require(owner == msg.sender);
         _;
@@ -23,35 +23,35 @@ contract Splitter {
     recipient2 = _recipient2;
   }
     //split the amount between two recipients
-  function split(uint) payable OnlyByOwner returns (uint){
+  function split(uint) payable onlyByOwner returns(uint) {
     require(msg.value>1);
   balances[recipient1] += msg.value/2;
   balances[recipient2] += msg.value/2;
-  if (msg.value%2>0){
-    balances[msg.sender]+=1;
+  if (msg.value%2>0) {
+    balances[msg.sender] += 1;
   }}
 
-  function withdraw () payable returns (bool){
+  function withdraw () payable returns (bool) {
     require(balances[msg.sender]>0);
     uint amount = balances[msg.sender];
-    balances[msg.sender ]=0;
-    if (msg.sender.send(amount)){
+    balances[msg.sender] = 0;
+    if (msg.sender.send(amount)) {
       return true;
     } else {
-      balances[msg.sender]=amount;
+      balances[msg.sender] = amount;
       return false;
     }
   }
 
-  function getBalance(address) public returns (uint){
+  function getBalance(address) public returns (uint) {
     contractBalance = this.balance;
   }
 
-  function killContract() OnlyByOwner {
-    suicide(owner);
+  function killContract() onlyByOwner {
+    selfdestruct(owner);
   }
 
-  function()payable{
+  function()payable {
     
   }
 }
