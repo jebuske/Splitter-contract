@@ -1,12 +1,17 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.17;
 
 contract Splitter {
-  uint public contractBalance;
+
   address recipient1;
   address recipient2;
   address public owner;
 
+
   mapping(address => uint) public balances;
+
+  
+  event LogSplit(uint value, uint balanceRecipient1, uint balanceRecipient2);
+  event LogWithdrawal(uint value, address indexed recipient);
 
   
 
@@ -21,37 +26,30 @@ contract Splitter {
     owner = msg.sender;
     recipient1 = _recipient1;
     recipient2 = _recipient2;
+   
   }
     //split the amount between two recipients
-  function split(uint) payable onlyByOwner returns(uint) {
+  function split() payable onlyByOwner returns(bool) {
     require(msg.value>1);
   balances[recipient1] += msg.value/2;
   balances[recipient2] += msg.value/2;
-  if (msg.value%2>0) {
-    balances[msg.sender] += 1;
-  }}
+  uint remainder = msg.value%2;
+  if (remainder>0) balances[msg.sender]+= remainder;
+  LogSplit(msg.value, balances[recipient1], balances[recipient2]);
+  return true;
+  }
 
   function withdraw () payable returns (bool) {
     require(balances[msg.sender]>0);
     uint amount = balances[msg.sender];
     balances[msg.sender] = 0;
-    if (msg.sender.send(amount)) {
-      return true;
-    } else {
-      balances[msg.sender] = amount;
-      return false;
-    }
-  }
-
-  function getBalance(address) public returns (uint) {
-    contractBalance = this.balance;
+    msg.sender.transfer(amount);
+    LogWithdrawal(amount, msg.sender);
   }
 
   function killContract() onlyByOwner {
     selfdestruct(owner);
   }
 
-  function()payable {
-    
-  }
+  
 }
