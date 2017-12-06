@@ -29,7 +29,7 @@ contract Splitter {
    
   }
     //split the amount between two recipients
-  function split() payable onlyByOwner returns(bool) {
+  function split() payable public onlyByOwner returns(bool) {
     require(msg.value>1);
   balances[recipient1] += msg.value/2;
   balances[recipient2] += msg.value/2;
