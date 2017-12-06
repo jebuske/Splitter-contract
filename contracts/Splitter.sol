@@ -2,8 +2,8 @@ pragma solidity ^0.4.17;
 
 contract Splitter {
 
-  address recipient1;
-  address recipient2;
+  address public recipient1;
+  address public recipient2;
   address public owner;
 
 
@@ -11,7 +11,7 @@ contract Splitter {
 
   
   event LogSplit(uint value, uint balanceRecipient1, uint balanceRecipient2);
-  event LogWithdrawal(uint value, address indexed recipient);
+  event LogWithdrawal(uint value, address indexed sender);
 
   
 
@@ -45,6 +45,7 @@ contract Splitter {
     balances[msg.sender] = 0;
     msg.sender.transfer(amount);
     LogWithdrawal(amount, msg.sender);
+    return true;
   }
 
   function killContract() onlyByOwner {
